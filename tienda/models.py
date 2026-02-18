@@ -1,58 +1,79 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# creacion de prods dinamica
 
 class Producto(models.Model):
-    # modelo producto
+    """Producto del catálogo con soporte para múltiples imágenes."""
+
     nombre = models.CharField(max_length=100)
     precio = models.DecimalField(max_digits=10, decimal_places=0)
     descripcion = models.TextField()
     is_oferta = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name = 'Producto'
+        verbose_name_plural = 'Productos'
+        ordering = ['id']
+
     def __str__(self):
-        # texto pa admin y debug
         return self.nombre
 
     @property
     def primera_imagen(self):
-        # primer imagen si hay
+        """Retorna la primera imagen asociada o None."""
         return self.imagenes.first()
 
+
 class ProductImage(models.Model):
-    # imagenes del producto
-    producto = models.ForeignKey(Producto, related_name='imagenes', on_delete=models.CASCADE)
+    """Imagen asociada a un producto."""
+
+    producto = models.ForeignKey(
+        Producto, related_name='imagenes', on_delete=models.CASCADE
+    )
     imagen = models.ImageField(upload_to='productos/')
 
+    class Meta:
+        verbose_name = 'Imagen de producto'
+        verbose_name_plural = 'Imágenes de productos'
+
     def __str__(self):
-        # nombre pa mostrar
-        return f"Imagen de {self.producto.nombre}"
+        return f'Imagen de {self.producto.nombre}'
+
 
 class Cart(models.Model):
-    # carrito del user
+    """Carrito de compras vinculado a un usuario registrado."""
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = 'Carrito'
+        verbose_name_plural = 'Carritos'
+
     def __str__(self):
-        # etiqueta carrito
-        return f"Carrito de {self.user.username}"
+        return f'Carrito de {self.user.username}'
 
     @property
     def total(self):
-        # total carrito
+        """Suma total de todos los ítems del carrito."""
         return sum(item.subtotal for item in self.items.all())
 
+
 class CartItem(models.Model):
-    # item del carrito
+    """Ítem individual dentro de un carrito."""
+
     cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
+    class Meta:
+        verbose_name = 'Ítem del carrito'
+        verbose_name_plural = 'Ítems del carrito'
+
     def __str__(self):
-        # texto item
-        return f"{self.quantity} x {self.producto.nombre}"
+        return f'{self.quantity} x {self.producto.nombre}'
 
     @property
     def subtotal(self):
-        # subtotal por item
+        """Precio unitario multiplicado por la cantidad."""
         return self.producto.precio * self.quantity

@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+
 from .models import Profile
 
+
 def registro_view(request):
-    # crea usuario y lo loguea
+    """Registra un nuevo usuario y lo autentica automáticamente."""
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -17,8 +20,9 @@ def registro_view(request):
         form = UserCreationForm()
     return render(request, 'usuarios/registro.html', {'form': form})
 
+
 def login_view(request):
-    # valida y inicia sesion
+    """Autentica al usuario con sus credenciales."""
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -30,21 +34,24 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, 'usuarios/login.html', {'form': form})
 
+
 def logout_view(request):
-    # cierra sesion
+    """Cierra la sesión activa y redirige al inicio."""
     logout(request)
     messages.info(request, 'Has cerrado sesión.')
     return redirect('index')
 
+
+@login_required
 def perfil_view(request):
-    # actualiza foto perfil
-    if not request.user.is_authenticated:
-        return redirect('login')
-    profile, created = Profile.objects.get_or_create(user=request.user)
+    """Muestra y permite actualizar la foto de perfil del usuario."""
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+
     if request.method == 'POST':
         if 'foto_perfil' in request.FILES:
             profile.foto_perfil = request.FILES['foto_perfil']
             profile.save()
             messages.success(request, 'Foto de perfil actualizada.')
         return redirect('perfil')
+
     return render(request, 'usuarios/perfil.html', {'profile': profile})

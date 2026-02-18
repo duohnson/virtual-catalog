@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Entorno virtual
+venv/
+env/
+.venv/
+.env
+
+# Django
+*.sqlite3
+db.sqlite3
+*.log
+local_settings.py
+
+# Archivos de media subidos por usuarios
+media/perfiles/*
+media/productos/*
+!media/perfiles/.gitkeep
+!media/productos/.gitkeep
+
+# Static files generados
+staticfiles/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema operativo
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Distribución
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Coverage y tests
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover

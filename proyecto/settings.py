@@ -1,28 +1,23 @@
-# config del proyecto
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
-
-# ruta base del proyecto
+# Ruta base del proyecto
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# carpeta fotos
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Cargar variables de entorno desde .env
+load_dotenv(BASE_DIR / '.env')
 
-# config rapida, no usar en prod
+# ──────────────────────────────────────────────
+# Seguridad
+# ──────────────────────────────────────────────
+SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-key-solo-para-desarrollo')
+DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 'yes')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-# llave secreta no tocar
-SECRET_KEY = 'django-insecure-kiu@cnsvibmmwwrqv97hdc0(ylzg47z@(d5os8)lyt$_d!unf-'
-
-# debug en false pa produccion
-DEBUG = False
-
-ALLOWED_HOSTS = ['*']
-
-
-# apps instaladas
-
+# ──────────────────────────────────────────────
+# Aplicaciones instaladas
+# ──────────────────────────────────────────────
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -30,25 +25,36 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Apps del proyecto
     'home',
     'tienda',
     'buscador',
     'usuarios',
 ]
 
+# ──────────────────────────────────────────────
+# Middleware
+# ──────────────────────────────────────────────
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # Middleware personalizado
+    'proyecto.middleware.SecurityHeadersMiddleware',
+    'proyecto.middleware.RequestTimingMiddleware',
+    'proyecto.middleware.RateLimitMiddleware',
 ]
 
 ROOT_URLCONF = 'proyecto.urls'
 
+# ──────────────────────────────────────────────
+# Templates
+# ──────────────────────────────────────────────
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -59,8 +65,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'tienda.context_processors.cart_count',
                 'django.template.context_processors.media',
+                'tienda.context_processors.cart_count',
             ],
         },
     },
@@ -68,64 +74,119 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'proyecto.wsgi.application'
 
-
-# base de datos
-
+# ──────────────────────────────────────────────
+# Base de datos — MySQL
+# ──────────────────────────────────────────────
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'base'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
-
-# validacion contraseñas
-
+# ──────────────────────────────────────────────
+# Validación de contraseñas
+# ──────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# internasionalizacion
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+# ──────────────────────────────────────────────
+# Internacionalización
+# ──────────────────────────────────────────────
+LANGUAGE_CODE = 'es-cr'
+TIME_ZONE = 'America/Costa_Rica'
 USE_I18N = True
-
 USE_TZ = True
 
-
-# archivos estaticos
-
-STATIC_URL = 'static/'
+# ──────────────────────────────────────────────
+# Archivos estáticos y media
+# ──────────────────────────────────────────────
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# lectura statics
+STORAGES = {
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'static', 
-]
-
-#AUTH_USER_MODEL = 'usuarios.Usuario'
+# ──────────────────────────────────────────────
+# Autenticación
+# ──────────────────────────────────────────────
 LOGIN_URL = '/usuarios/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-LOGGING = {}
+# ──────────────────────────────────────────────
+# Seguridad adicional (producción)
+# ──────────────────────────────────────────────
+if not DEBUG:
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    X_FRAME_OPTIONS = 'DENY'
 
-WHITENOISE_ALLOW_ALL_ORIGINS = True
+# ──────────────────────────────────────────────
+# Rate limiting
+# ──────────────────────────────────────────────
+RATE_LIMIT_MAX_REQUESTS = 100
+RATE_LIMIT_WINDOW = 60
+
+# ──────────────────────────────────────────────
+# Logging
+# ──────────────────────────────────────────────
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'proyecto.middleware': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

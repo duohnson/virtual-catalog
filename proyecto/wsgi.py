@@ -1,4 +1,4 @@
-# config wsgi
+"""Configuración WSGI para el proyecto."""
 
 import os
 

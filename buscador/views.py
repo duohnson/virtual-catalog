@@ -1,22 +1,24 @@
 from django.shortcuts import render
-from tienda.models import Producto
 from django.core.paginator import Paginator
 from django.db.models import Q
 
+from tienda.models import Producto
+
+ITEMS_PER_PAGE = 10
+
+
 def buscar(request):
-    # filtra productos por texto
+    """Busca productos por nombre o descripción con paginación."""
     query = request.GET.get('q', '')
     productos = Producto.objects.filter(
         Q(nombre__icontains=query) | Q(descripcion__icontains=query)
-    ).order_by('id')
+    ).prefetch_related('imagenes').order_by('id')
 
-    paginator = Paginator(productos, 10)
+    paginator = Paginator(productos, ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
-    productos_page = paginator.get_page(page_number)
+    page_obj = paginator.get_page(page_number)
 
-    contexto = {
+    return render(request, 'home/search.html', {
         'query': query,
-        'catalogo': productos_page,
-        # data pa template busqueda
-    }
-    return render(request, 'home/search.html', contexto)
+        'catalogo': page_obj,
+    })

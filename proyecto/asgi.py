@@ -1,4 +1,4 @@
-# config asgi
+"""Configuración ASGI para el proyecto."""
 
 import os
 
