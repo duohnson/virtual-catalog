@@ -156,7 +156,7 @@ La comunicación entre apps se mantiene desacoplada: `home` consulta productos d
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/duohnson/template.git
+git clone https://github.com/duohnson/virtual-catalog.git
 cd tu-repositorio
 ```
 
