@@ -397,7 +397,6 @@ A continuación, se muestran algunas capturas de pantalla del sitio:
 ![Catálogo de productos](screenshots/Captura2.png)
 
 ### Inicio de sesión
-![Iniciar Sesión](screenshots/Captura3.png)
+![Inicio de sesión](screenshots/Captura3.png)
 
----
 
