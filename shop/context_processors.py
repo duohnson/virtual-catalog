@@ -1,4 +1,4 @@
-from tienda.models import Cart
+from shop.models import Cart
 
 
 def cart_count(request):

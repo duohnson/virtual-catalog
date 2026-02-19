@@ -18,7 +18,7 @@ def registro_view(request):
             return redirect('index')
     else:
         form = UserCreationForm()
-    return render(request, 'usuarios/registro.html', {'form': form})
+    return render(request, 'users/register.html', {'form': form})
 
 
 def login_view(request):
@@ -32,7 +32,7 @@ def login_view(request):
             return redirect('index')
     else:
         form = AuthenticationForm()
-    return render(request, 'usuarios/login.html', {'form': form})
+    return render(request, 'users/login.html', {'form': form})
 
 
 def logout_view(request):
@@ -54,4 +54,4 @@ def perfil_view(request):
             messages.success(request, 'Foto de perfil actualizada.')
         return redirect('perfil')
 
-    return render(request, 'usuarios/perfil.html', {'profile': profile})
+    return render(request, 'users/profile.html', {'profile': profile})

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block catalogo %}
+    <!-- contacto -->
+    <section class="section">
+        <h1 class="section-title">Sobre duohnson</h1>
+        <div class="content-card">
+            <p><strong>virtual-catalog</strong> es una plataforma web desarrollada en Django que funciona como catálogo digital para un emprendimiento de accesorios. Permite explorar productos, gestionar un carrito de compras y generar pedidos directos vía WhatsApp.</p>
+            <p>* Catálogo digital con productos y ofertas destacados.<br>
+            * Carrito de compras persistente por usuario autenticado.<br>
+            * Pedidos directos y personalizados, sin pasarelas de pago.<br>
+            * Búsqueda avanzada y perfil de usuario con foto.</p>
+            <p>El sistema está pensado para negocios pequeños que buscan presencia online y atención personalizada.</p>
+        </div>
+    </section>
+
+    <!-- entregas -->
+    <section class="section">
+        <h2 class="section-title">Tecnologías y contacto</h2>
+        <div class="content-card">
+            <p>* <strong>Backend:</strong> Django 6.0 (Python 3.12+)<br>
+            * <strong>Frontend:</strong> HTML5, CSS3, JavaScript<br>
+            * <strong>Base de datos:</strong> MySQL 8.0 (o SQLite para pruebas)<br>
+            * <strong>Servidor:</strong> Waitress + WhiteNoise, desplegado en un entorno de producción LINUX.</p>
+            <p>¿Tienes dudas, sugerencias o quieres hacer un pedido? Escríbenos por WhatsApp o visítanos en San José, Costa Rica. ¡Gracias por apoyar proyectos independientes!</p>
+        </div>
+    </section>
+    {% endblock %}

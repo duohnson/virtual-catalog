@@ -9,16 +9,15 @@
 
 ---
 
-Plataforma web desarrollada en Django que funciona como catálogo digital para un emprendimiento de accesorios. El sistema permite explorar productos, gestionar un carrito de compras por usuario y generar pedidos directos vía WhatsApp. Pensado para negocios pequeños que necesitan presencia online sin depender de pasarelas de pago.
-
----
-
 ## Tabla de contenido
 
+- [Acceso ADMIN](#acceso-admin)
 - [Arquitectura del proyecto](#arquitectura-del-proyecto)
 - [Funcionalidades](#funcionalidades)
 - [Stack técnico](#stack-técnico)
 - [Estructura de directorios](#estructura-de-directorios)
+- [proyecto desarrollado para strawberrydaki.com](#proyecto-desarrollado-para-strawberrydaki.com)
+- [Efecto de caída de emojis](#efecto-de-caída-de-emojis)
 - [Requisitos previos](#requisitos-previos)
 - [Instalación y configuración](#instalación-y-configuración)
 - [Variables de entorno](#variables-de-entorno)
@@ -27,7 +26,19 @@ Plataforma web desarrollada en Django que funciona como catálogo digital para u
 - [Endpoints principales](#endpoints-principales)
 - [Despliegue en producción](#despliegue-en-producción)
 - [Capturas](#capturas)
-- [Licencia](#licencia)
+
+---
+
+## Acceso ADMIN
+
+Para desarrollo y pruebas rápidas, el proyecto está configurado por defecto para usar SQLite3 como base de datos local. Sin embargo, se recomienda el uso de MySQL en producción para mayor robustez y escalabilidad.
+
+Puedes acceder al panel de administración de Django con el siguiente usuario de prueba:
+
+* Usuario: **admin**
+* Contraseña: **admin**
+
+Recuerda cambiar estas credenciales y la base de datos antes de desplegar en producción.
 
 ---
 
@@ -59,7 +70,7 @@ La comunicación entre apps se mantiene desacoplada: `home` consulta productos d
 | **Ofertas** | Los productos marcados como oferta se muestran destacados en la página principal. |
 | **Perfil de usuario** | Foto de perfil visible en la navbar. Signals de Django crean el perfil automáticamente al registrarse. |
 | **Panel de admin** | Gestión completa de productos e imágenes desde el admin de Django con inlines. |
-
+| **Efecto de emojis** | Efecto decorativo de emojis caídos configurable desde JavaScript para fechas especiales. |
 ---
 
 ## Stack técnico
@@ -85,7 +96,7 @@ La comunicación entre apps se mantiene desacoplada: `home` consulta productos d
 ├── .env.template              # Plantilla de variables de entorno
 ├── .gitignore                 # Archivos excluidos de git
 │
-├── proyecto/                  # Configuración central
+├── project/                  # Configuración central
 │   ├── settings.py            # Settings con variables de entorno y MySQL
 │   ├── urls.py                # Rutas raíz del proyecto
 │   ├── middleware.py          # Middleware de seguridad, timing y rate limiting
@@ -97,32 +108,32 @@ La comunicación entre apps se mantiene desacoplada: `home` consulta productos d
 │   ├── urls.py
 │   └── templates/home/
 │       ├── index.html         # Página principal con ofertas
-│       └── contacto.html      # Información del negocio
+│       └── contact.html       # Información del negocio
 │
-├── tienda/                    # App: catálogo y carrito
+├── shop/                    # App: catálogo y carrito
 │   ├── models.py              # Producto, ProductImage, Cart, CartItem
 │   ├── views.py               # CRUD del carrito, catálogo, detalle
 │   ├── admin.py               # Admin con imágenes inline
 │   ├── context_processors.py  # Contador de carrito global
 │   ├── urls.py
 │   └── templates/home/
-│       ├── catalogo.html      # Grilla de productos paginada
-│       ├── detalle_producto.html  # Detalle con carrusel de imágenes
+│       ├── catalog.html      # Grilla de productos paginada
+│       ├── product_detail.html  # Detalle con carrusel de imágenes
 │       └── cart.html           # Vista del carrito
 │
-├── buscador/                  # App: búsqueda de productos
+├── search/                  # App: búsqueda de productos
 │   ├── views.py               # Búsqueda con Q lookups
 │   └── templates/home/
 │       └── search.html        # Resultados de búsqueda
 │
-├── usuarios/                  # App: autenticación y perfiles
+├── users/                  # App: autenticación y perfiles
 │   ├── models.py              # Profile (foto de perfil)
 │   ├── views.py               # Registro, login, logout, perfil
 │   ├── signals.py             # Auto-creación de perfil
 │   └── templates/usuarios/
 │       ├── login.html
-│       ├── registro.html
-│       └── perfil.html
+│       ├── register.html
+│       └── profile.html
 │
 ├── templates/
 │   └── base.html              # Template base con navbar, footer, búsqueda
@@ -139,6 +150,27 @@ La comunicación entre apps se mantiene desacoplada: `home` consulta productos d
     ├── productos/
     └── perfiles/
 ```
+## Proyecto desarrollado para strawberrydaki.com
+
+Este proyecto fue creado para el sitio web:
+
+**[strawberrydaki.com](https://strawberrydaki.com/)**
+
+La plataforma implementa un catálogo virtual, carrito de compras, autenticación de usuarios y efectos visuales personalizables, adaptados a las necesidades de strawberrydaki.com.
+
+---
+
+## Efecto de caída de emojis
+
+Para cambiar el emoji o la opacidad del efecto decorativo:
+
+1. Abre el archivo `static/js/emoji-fall.js`.
+2. Edita la variable `emoji` para el símbolo que desees (por ejemplo, '💥', '❄️', '💻', etc).
+3. Edita la variable `emojiOpacity` para ajustar la opacidad (valor entre 0.0 y 1.0).
+
+No es necesario cambiar nada en el admin de Django ni en la base de datos. El efecto se controla únicamente desde el archivo JS.
+Esto se implemento a petición del cliente para fechas especiales, al tomar la iniciativa para dejarlo en el proyecto, se decidió hacerlo configurable desde el JS para no tener que tocar el código en producción.
+Borrando el emoji o poniendo una opacidad de 0 se desactivaría el efecto sin necesidad de eliminar el archivo JS ni modificar el HTML.
 
 ---
 
@@ -282,7 +314,7 @@ Cada producto puede tener múltiples imágenes a través de `ProductImage`. El c
 
 ## Middleware personalizado
 
-Implementé tres middleware ubicados en `proyecto/middleware.py`:
+Implementé tres middleware ubicados en `project/middleware.py`:
 
 ### SecurityHeadersMiddleware
 
@@ -308,17 +340,17 @@ Limitador de peticiones por IP en memoria. Restringe a 100 requests por minuto p
 | Método | Ruta | Vista | Descripción |
 |---|---|---|---|
 | GET | `/` | `home.index` | Landing con ofertas |
-| GET | `/contacto/` | `home.contacto` | Información de contacto |
-| GET | `/catalogo/` | `tienda.catalogo` | Catálogo paginado |
-| GET | `/catalogo/producto/<id>/` | `tienda.detalle_producto` | Detalle con carrusel |
-| POST | `/catalogo/producto/<id>/add_to_cart/` | `tienda.add_to_cart` | Agregar al carrito |
-| GET | `/catalogo/cart/` | `tienda.view_cart` | Ver carrito |
-| GET | `/catalogo/cart/remove/<id>/` | `tienda.remove_from_cart` | Eliminar del carrito |
-| GET | `/buscar/?q=texto` | `buscador.buscar` | Búsqueda de productos |
-| GET/POST | `/usuarios/registro/` | `usuarios.registro_view` | Registro |
-| GET/POST | `/usuarios/login/` | `usuarios.login_view` | Login |
-| GET | `/usuarios/logout/` | `usuarios.logout_view` | Logout |
-| GET/POST | `/usuarios/perfil/` | `usuarios.perfil_view` | Perfil de usuario |
+| GET | `/contact/` | `home.contact` | Información de contacto |
+| GET | `/catalog/` | `shop.catalog` | Catálogo paginado |
+| GET | `/catalog/product/<id>/` | `shop.product_detail` | Detalle con carrusel |
+| POST | `/catalog/product/<id>/add_to_cart/` | `shop.add_to_cart` | Agregar al carrito |
+| GET | `/catalog/cart/` | `shop.view_cart` | Ver carrito |
+| GET | `/catalog/cart/remove/<id>/` | `shop.remove_from_cart` | Eliminar del carrito |
+| GET | `/search/?q=texto` | `search.buscar` | Búsqueda de productos |
+| GET/POST | `/users/register/` | `users.registro_view` | Registro |
+| GET/POST | `/users/login/` | `users.login_view` | Login |
+| GET | `/users/logout/` | `users.logout_view` | Logout |
+| GET/POST | `/users/profile/` | `users.perfil_view` | Perfil de usuario |
 | — | `/admin/` | Admin de Django | Panel de administración |
 
 ---
@@ -359,13 +391,13 @@ Para entornos Linux con mayor carga, se puede reemplazar Waitress por Gunicorn y
 A continuación, se muestran algunas capturas de pantalla del sitio:
 
 ### Página principal
-![Página principal](capturas/Captura1.png)
+![Página principal](screenshots/Captura1.png)
 
 ### Catálogo de productos
-![Catálogo de productos](capturas/Captura2.png)
+![Catálogo de productos](screenshots/Captura2.png)
 
 ### Inicio de sesión
-![Iniciar Sesión](capturas/Captura3.png)
+![Iniciar Sesión](screenshots/Captura3.png)
 
 ---
 

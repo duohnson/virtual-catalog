@@ -16,6 +16,8 @@ DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 'yes')
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # ──────────────────────────────────────────────
+
+# ──────────────────────────────────────────────
 # Aplicaciones instaladas
 # ──────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -27,10 +29,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Apps del proyecto
     'home',
-    'tienda',
-    'buscador',
-    'usuarios',
+    'shop',
+    'search',
+    'users',
 ]
+
+# ──────────────────────────────────────────────
+# Base de datos: SQLite3 para pruebas y desarrollo
+# ──────────────────────────────────────────────
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 # ──────────────────────────────────────────────
 # Middleware
@@ -45,12 +57,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Middleware personalizado
-    'proyecto.middleware.SecurityHeadersMiddleware',
-    'proyecto.middleware.RequestTimingMiddleware',
-    'proyecto.middleware.RateLimitMiddleware',
+    'project.middleware.SecurityHeadersMiddleware',
+    'project.middleware.RequestTimingMiddleware',
+    'project.middleware.RateLimitMiddleware',
 ]
 
-ROOT_URLCONF = 'proyecto.urls'
+ROOT_URLCONF = 'project.urls'
 
 # ──────────────────────────────────────────────
 # Templates
@@ -66,29 +78,22 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
-                'tienda.context_processors.cart_count',
+                'shop.context_processors.cart_count',
+                'home.context_processors.emoji_effect_config',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'proyecto.wsgi.application'
+WSGI_APPLICATION = 'project.wsgi.application'
 
 # ──────────────────────────────────────────────
-# Base de datos — MySQL
+# Base de datos: SQLite3 para pruebas y desarrollo
 # ──────────────────────────────────────────────
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'base'),
-        'USER': os.getenv('DB_USER', 'root'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -121,6 +126,10 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        'LOCATION': MEDIA_ROOT,
+    },
     'staticfiles': {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     },
@@ -129,7 +138,7 @@ STORAGES = {
 # ──────────────────────────────────────────────
 # Autenticación
 # ──────────────────────────────────────────────
-LOGIN_URL = '/usuarios/login/'
+LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
@@ -181,7 +190,7 @@ LOGGING = {
             'level': 'WARNING',
             'propagate': False,
         },
-        'proyecto.middleware': {
+        'project.middleware': {
             'handlers': ['console'],
             'level': 'WARNING',
             'propagate': False,

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.db.models import Q
 
-from tienda.models import Producto
+from shop.models import Producto
 
 ITEMS_PER_PAGE = 10
 

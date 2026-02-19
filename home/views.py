@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from tienda.models import Producto
+from shop.models import Producto
 
 
 def index(request):
@@ -10,4 +10,4 @@ def index(request):
 
 def contacto(request):
     """Página de contacto e información del negocio."""
-    return render(request, 'home/contacto.html')
+    return render(request, 'home/contact.html')

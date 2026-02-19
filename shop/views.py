@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from tienda.models import Producto, Cart, CartItem
+from shop.models import Producto, Cart, CartItem
 
 ITEMS_PER_PAGE = 10
 
@@ -16,7 +16,7 @@ def catalogo(request):
     paginator = Paginator(productos, ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'home/catalogo.html', {'catalogo': page_obj})
+    return render(request, 'home/catalog.html', {'catalogo': page_obj})
 
 
 def detalle_producto(request, producto_id):
@@ -25,7 +25,7 @@ def detalle_producto(request, producto_id):
         Producto.objects.prefetch_related('imagenes'),
         id=producto_id
     )
-    return render(request, 'home/detalle_producto.html', {'producto': producto})
+    return render(request, 'home/product_detail.html', {'producto': producto})
 
 
 @login_required
