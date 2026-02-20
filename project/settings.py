@@ -35,16 +35,6 @@ INSTALLED_APPS = [
 ]
 
 # ──────────────────────────────────────────────
-# Base de datos: SQLite3 para pruebas y desarrollo
-# ──────────────────────────────────────────────
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-# ──────────────────────────────────────────────
 # Middleware
 # ──────────────────────────────────────────────
 MIDDLEWARE = [
@@ -93,7 +83,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db_tests' / 'db.sqlite3',
     }
 }
 

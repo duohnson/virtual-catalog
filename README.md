@@ -53,6 +53,10 @@ home/       → Página principal y contacto
 shop/       → Catálogo, detalle de producto, carrito de compras
 search/     → Motor de búsqueda por texto con paginación
 users/      → Registro, login, logout, perfil con foto
+templates/   → Templates base y compartidos
+static/      → Archivos estáticos (CSS, JS, imágenes)
+media/       → Archivos subidos por usuarios (gitignored)
+db_tests/    → Base de datos SQLite para pruebas locales (no en producción)
 ```
 
 ---
